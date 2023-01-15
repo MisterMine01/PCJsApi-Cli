@@ -1,21 +1,29 @@
 #include <iostream>
-#include "git/git.hpp"
+#include "cache/cache.hpp"
+#include "command.cpp"
 
 int main(int arc, char **argv)
 {
-    pcjs::git::GitData git("MisterMine01", "PCJsApi");
-    int size;
-    pcjs::git::Release* releases = git.get_release(&size);
-    for(int i = 0; i < size; i++){
-        std::cout << "Release " << i << std::endl;
-        std::cout << "    " << releases[i].name << std::endl;
-        std::cout << "    " << releases[i].tag_name << std::endl;
-        std::cout << "    " << releases[i].url << std::endl;
-        for(int j = 0; j < releases[i].assets_size; j++){
-            std::cout << "    " << "    " << releases[i].assets[j].name << std::endl;
-            std::cout << "    " << "    " << releases[i].assets[j].url << std::endl;
-            git.download_asset(releases[i].assets[j], "./" + releases[i].assets[j].name);
+    pcjsapi::cache::Cache cache;
+    std::string *args = new std::string[arc];
+    for (int i = 0; i < arc; i++)
+    {
+        args[i] = argv[i];
+    }
+    if (arc == 1  || args[1] == "help")
+    {
+        return pcjsapi::help();
+    }
+    if (args[1] == "cli") {
+        if (arc == 2) {
+            return pcjsapi::cli_help();
         }
+        std::string new_args[arc - 2];
+        for (int i = 0; i < arc - 2; i++)
+        {
+            new_args[0] = args[i + 2];
+        }
+        return pcjsapi::cli_command(arc - 2, new_args, cache);
     }
     return 0;
 }
