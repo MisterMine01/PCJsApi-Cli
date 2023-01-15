@@ -9,7 +9,13 @@
             },
             "command": "cmake",
             "args": [
-                "-G 'NMake Makefiles' -DCMAKE_BUILD_TYPE=Debug .."
+                "--build",
+                "${workspaceRoot}/build",
+                "--config",
+                "Debug",
+                "--target",
+                "PcJsApi",
+                "--",
             ],
             "group": {
                 "kind": "build",

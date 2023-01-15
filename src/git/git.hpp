@@ -8,6 +8,7 @@ namespace pcjs {
         struct Asset{
             std::string name;
             std::string url;
+            std::string release_name;
         };
 
         struct Release{

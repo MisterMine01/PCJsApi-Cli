@@ -22,7 +22,8 @@ pcjs::git::GitData::GitData(std::string username, std::string repository)
 
     curl = curl_easy_init();
     if(curl) {
-        curl_easy_setopt(curl, CURLOPT_URL, ("https://api.github.com/repos/" + this->username + "/" + this->repository + "/releases").c_str());       
+        curl_easy_setopt(curl, CURLOPT_URL, ("https://api.github.com/repos/" + this->username + "/" + this->repository + "/releases").c_str());
+        curl_easy_setopt(curl, CURLOPT_USERAGENT, "PCJsApi-CLI/1.0");
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
         res = curl_easy_perform(curl);
@@ -41,7 +42,8 @@ pcjs::git::GitData::GitData(std::string username, std::string repository)
         this->releases[i].assets = new pcjs::git::Asset[this->releases[i].assets_size];
         for(int j = 0; j < this->releases[i].assets_size; j++){
             this->releases[i].assets[j].name = json[i]["assets"][j]["name"];
-            this->releases[i].assets[j].url = json[i]["assets"][j]["url"];
+            this->releases[i].assets[j].url = json[i]["assets"][j]["browser_download_url"];
+            this->releases[i].assets[j].release_name = this->releases[i].name;
         }
     }
 }
@@ -58,11 +60,15 @@ void pcjs::git::GitData::download_asset(pcjs::git::Asset asset, std::string path
     CURLcode res;
     FILE *fp;
 
+    std::string readBuffer;
+
     curl = curl_easy_init();
     if(curl) {
         fp = fopen(path.c_str(), "wb");
         curl_easy_setopt(curl, CURLOPT_URL, asset.url.c_str());
+        curl_easy_setopt(curl, CURLOPT_USERAGENT, "PCJsApi-CLI/1.0");
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, NULL);
+        curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, fp);
         res = curl_easy_perform(curl);
         curl_easy_cleanup(curl);
