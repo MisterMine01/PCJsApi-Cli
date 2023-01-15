@@ -13,4 +13,5 @@ Command line interface for the PCJsApi.
 - build : Build the project
 - cli : Command of the cli
     - upgrade : Upgrade the cli
+    - update : Update the cache
     - clear : Clear the cache
