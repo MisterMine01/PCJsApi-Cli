@@ -1,5 +1,6 @@
 #include <iostream>
 #include "cache/cache.hpp"
+#include "cli_command.cpp"
 #include "command.cpp"
 
 int main(int arc, char **argv)
@@ -13,6 +14,10 @@ int main(int arc, char **argv)
     if (arc == 1  || args[1] == "help")
     {
         return pcjsapi::help();
+    }
+    if (args[1] == "init")
+    {
+        return pcjsapi::init(cache);
     }
     if (args[1] == "cli") {
         if (arc == 2) {

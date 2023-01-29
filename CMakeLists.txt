@@ -29,6 +29,7 @@ message(STATUS "Tree reorganized")
 
 
 target_link_libraries(${PROJECT_NAME} PRIVATE stdc++fs)
+target_link_libraries(${PROJECT_NAME} PRIVATE zip)
 target_link_libraries(${PROJECT_NAME} PRIVATE nlohmann_json::nlohmann_json)
 target_link_libraries(${PROJECT_NAME} PRIVATE ${CURL_LIBRARIES})
 
