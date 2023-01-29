@@ -18,8 +18,11 @@ int main(int arc, char **argv)
     if (args[1] == "init")
     {
         return pcjsapi::init(cache);
-    }
-    if (args[1] == "cli") {
+    } else if (args[1] == "update") {
+        return pcjsapi::update(cache);
+    } else if (args[1] == "load") {
+        return 1;
+    } else if (args[1] == "cli") {
         if (arc == 2) {
             return pcjsapi::cli_help();
         }

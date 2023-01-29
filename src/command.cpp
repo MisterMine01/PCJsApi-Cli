@@ -4,10 +4,9 @@
 #include <string>
 #include <iostream>
 #include "cache/cache.hpp"
-#include <zip.h>
 #include <experimental/filesystem>
-#include <fstream>
 #include "nlohmann/json.hpp"
+#include "zipper.cpp"
 
 namespace pcjsapi
 {
@@ -18,7 +17,25 @@ namespace pcjsapi
         std::cout << "------------------------------------------------" << std::endl;
         std::cout << "pcjsapi help - help" << std::endl;
         std::cout << "pcjsapi cli - option of the cli" << std::endl;
+        std::cout << "pcjsapi init - initialize the project" << std::endl;
+        std::cout << "pcjsapi update - update the project" << std::endl;
+        std::cout << "pcjsapi install - install the dependency of the project" << std::endl;
         return 0;
+    }
+
+    void getAsset(pcjsapi::cache::CacheRelease release, pcjsapi::cache::CacheAsset *gitignore, pcjsapi::cache::CacheAsset *zip_asset)
+    {
+        for (int i = 0; i < release.assets_size; i++)
+        {
+            if (release.assets[i].name == "gitignore")
+            {
+                *gitignore = release.assets[i];
+            }
+            else if (release.assets[i].name == "dev.zip")
+            {
+                *zip_asset = release.assets[i];
+            }
+        }
     }
 
     int init(pcjsapi::cache::Cache cache)
@@ -35,55 +52,20 @@ namespace pcjsapi
         pcjsapi::cache::CacheRelease release = cache.get_last_release();
         pcjsapi::cache::CacheAsset gitignore;
         pcjsapi::cache::CacheAsset zip_asset;
-        for (int i = 0; i < release.assets_size; i++)
+        getAsset(release, &gitignore, &zip_asset);
+        if (gitignore.name == "" || zip_asset.name == "")
         {
-            if (release.assets[i].name == "gitignore")
-            {
-                gitignore = release.assets[i];
-            }
-            else if (release.assets[i].name == "dev.zip")
-            {
-                zip_asset = release.assets[i];
-            }
-        }
-        std::experimental::filesystem::copy_file(gitignore.path, ".gitignore");
-        struct zip *z;
-        struct zip_file *zfile;
-        struct zip_stat zstat;
-        int err;
-        if ((z = zip_open(zip_asset.path.c_str(), 0, &err)) == NULL)
-        {
-            std::cerr << "Can't open zip_file: " << zip_asset.name << std::endl;
+            std::cerr << "Can't find gitignore or dev.zip in the last release" << std::endl;
             return 1;
         }
-        for (int i = 0; i < zip_get_num_entries(z, 0); i++)
+        if (std::experimental::filesystem::exists(".gitignore"))
         {
-            if (!zip_stat_index(z, i, 0, &zstat) == 0)
-            {
-                printf("File[%s] Line[%d]/n", __FILE__, __LINE__);
-                continue;
-            }
-            if (zstat.name[strlen(zstat.name) - 1] == '/')
-            {
-                std::experimental::filesystem::create_directories(zstat.name);
-                continue;
-            }
-            if ((zfile = zip_fopen_index(z, i, 0)) == NULL)
-            {
-                printf("File[%s] Line[%d]/n", __FILE__, __LINE__);
-                continue;
-            }
-            std::ofstream file(zstat.name);
-            char buf[1024];
-            int len;
-            while ((len = zip_fread(zfile, buf, sizeof(buf))) > 0)
-            {
-                file.write(buf, len);
-            }
-            file.close();
-            zip_fclose(zfile);
+            std::experimental::filesystem::remove(".gitignore");
         }
-        zip_close(z);
+        std::experimental::filesystem::copy_file(gitignore.path, ".gitignore");
+
+        decompress(zip_asset.path, true);
+        
         std::experimental::filesystem::create_directories("src");
         nlohmann::json json = {
             {"pcjs_version", release.tag_name},
@@ -93,6 +75,51 @@ namespace pcjsapi
         std::ofstream file("pcjs_config.json");
         file << json.dump(4);
         file.close();
+        return 0;
+    }
+
+    int update(pcjsapi::cache::Cache cache)
+    {
+        std::cout << "WARNING ! you can delete change in the index.php and .gitignore" << std::endl
+                << "update in this folder, are you ok ?" << std::endl
+                << "y/n[n]> ";
+        std::string answer;
+        std::cin >> answer;
+        if (answer != "y")
+        {
+            std::cout << "cancel update" << std::endl;
+            return 1;
+        }
+        pcjsapi::cache::CacheRelease release = cache.get_last_release();
+        pcjsapi::cache::CacheAsset gitignore;
+        pcjsapi::cache::CacheAsset zip_asset;
+        getAsset(release, &gitignore, &zip_asset);
+        if (gitignore.name == "" || zip_asset.name == "")
+        {
+            std::cerr << "Can't find gitignore or dev.zip in the last release" << std::endl;
+            return 1;
+        }
+        nlohmann::json json;
+        std::ifstream file("pcjs_config.json");
+        file >> json;
+        file.close();
+        if (json["pcjs_version"] == release.tag_name)
+        {
+            std::cout << "You are already up to date" << std::endl;
+            return 0;
+        }
+        if (std::experimental::filesystem::exists(".gitignore"))
+        {
+            std::experimental::filesystem::remove(".gitignore");
+        }
+        std::experimental::filesystem::copy_file(gitignore.path, ".gitignore");
+
+        decompress(zip_asset.path, true);
+
+        json["pcjs_version"] = release.tag_name;
+        std::ofstream file2("pcjs_config.json");
+        file2 << json.dump(4);
+        file2.close();
         return 0;
     }
 }
