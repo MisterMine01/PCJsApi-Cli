@@ -20,8 +20,8 @@ int main(int arc, char **argv)
         return pcjsapi::init(cache);
     } else if (args[1] == "update") {
         return pcjsapi::update(cache);
-    } else if (args[1] == "load") {
-        return 1;
+    } else if (args[1] == "install") {
+        return pcjsapi::install(cache);
     } else if (args[1] == "cli") {
         if (arc == 2) {
             return pcjsapi::cli_help();

@@ -56,6 +56,18 @@ pcjsapi::cache::CacheRelease pcjsapi::cache::Cache::get_last_release()
     return releases[releases_size - 1];
 }
 
+pcjsapi::cache::CacheRelease *pcjsapi::cache::Cache::find_release(std::string tag_name)
+{
+    for (int i = 0; i < releases_size; i++)
+    {
+        if (releases[i].tag_name == tag_name)
+        {
+            return &releases[i];
+        }
+    }
+    return nullptr;
+}
+
 void pcjsapi::cache::Cache::update_cache(bool force)
 {
     std::cout << "Updating cache..." << std::endl;

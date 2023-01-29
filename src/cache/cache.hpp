@@ -37,6 +37,7 @@ namespace pcjsapi
             ~Cache();
             CacheRelease *get_release(int *size);
             CacheRelease get_last_release();
+            CacheRelease *find_release(std::string tag_name);
             void update_cache(bool force = false);
             void download_asset(CacheAsset asset);
         };
