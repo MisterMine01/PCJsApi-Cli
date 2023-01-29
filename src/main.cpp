@@ -5,7 +5,7 @@
 
 int main(int arc, char **argv)
 {
-    pcjsapi::cache::Cache cache;
+    pcjsapi::cache::Cache cache("MisterMine01", "PCJsApi");
     std::string *args = new std::string[arc];
     for (int i = 0; i < arc; i++)
     {
@@ -22,6 +22,12 @@ int main(int arc, char **argv)
         return pcjsapi::update(cache);
     } else if (args[1] == "install") {
         return pcjsapi::install(cache);
+    } else if (args[1] == "build") {
+        // TODO
+    } else if (args[1] == "run") {
+        // TODO
+    } else if (args[1] == "add") {
+        // TODO
     } else if (args[1] == "cli") {
         if (arc == 2) {
             return pcjsapi::cli_help();

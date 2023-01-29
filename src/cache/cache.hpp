@@ -31,9 +31,12 @@ namespace pcjsapi
         private:
             CacheRelease *releases;
             int releases_size;
+            std::string github_user;
+            std::string github_repository;
+            std::string cache_path;
 
         public:
-            Cache();
+            Cache(std::string github_user, std::string github_repository);
             ~Cache();
             CacheRelease *get_release(int *size);
             CacheRelease get_last_release();
