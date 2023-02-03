@@ -8,7 +8,6 @@ static size_t WriteCallback(void *contents, size_t size, size_t nmemb, void *use
     return size * nmemb;
 }
 
-
 pcjs::git::GitData::GitData(std::string username, std::string repository)
 {
     this->username = username;
@@ -17,7 +16,6 @@ pcjs::git::GitData::GitData(std::string username, std::string repository)
     this->releases_size = 0;
 
     CURL *curl;
-    CURLcode res;
     std::string readBuffer;
 
     curl = curl_easy_init();
@@ -26,7 +24,7 @@ pcjs::git::GitData::GitData(std::string username, std::string repository)
         curl_easy_setopt(curl, CURLOPT_USERAGENT, "PCJsApi-CLI/1.0");
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
-        res = curl_easy_perform(curl);
+        curl_easy_perform(curl);
         curl_easy_cleanup(curl);
     } else {
         throw "Curl error";
@@ -57,7 +55,6 @@ pcjs::git::Release* pcjs::git::GitData::get_release(int* size)
 void pcjs::git::GitData::download_asset(pcjs::git::Asset asset, std::string path)
 {
     CURL *curl;
-    CURLcode res;
     FILE *fp;
 
     std::string readBuffer;
@@ -70,7 +67,7 @@ void pcjs::git::GitData::download_asset(pcjs::git::Asset asset, std::string path
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, NULL);
         curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, fp);
-        res = curl_easy_perform(curl);
+        curl_easy_perform(curl);
         curl_easy_cleanup(curl);
         fclose(fp);
     }

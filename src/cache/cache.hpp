@@ -44,9 +44,7 @@ namespace pcjsapi
             void update_cache(bool force = false);
             void download_asset(CacheAsset asset);
         };
-    };
-};
-
-#include "./cache.cpp"
+    }
+}
 
 #endif

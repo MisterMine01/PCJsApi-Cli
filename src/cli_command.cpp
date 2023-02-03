@@ -5,6 +5,7 @@
 
 #include <string>
 #include <iostream>
+#include <experimental/filesystem>
 
 namespace pcjsapi {
     int cli_update(pcjsapi::cache::Cache cache) {
@@ -38,6 +39,6 @@ namespace pcjsapi {
         }
         return cli_help();
     }
-};
+}
 
 #endif

@@ -32,9 +32,7 @@ namespace pcjs {
                 Release* get_release(int* size);
                 void download_asset(Asset asset, std::string path);
         };
-    };
-};
-
-#include "./git.cpp"
+    }
+}
 
 #endif
