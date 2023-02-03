@@ -8,15 +8,18 @@
 #include "cache.hpp"
 
 
-pcjsapi::cache::Cache::Cache()
+pcjsapi::cache::Cache::Cache(std::string github_user, std::string github_repository)
 {
-    if (!std::experimental::filesystem::exists(ABSOLUTE_CACHE_PATH))
+    this->github_user = github_user;
+    this->github_repository = github_repository;
+    this->cache_path = ABSOLUTE_CACHE_PATH + github_user + "/" + github_repository + "/";
+    if (!std::experimental::filesystem::exists(cache_path))
     {
         std::cout << "Creating cache directory..." << std::endl;
-        std::experimental::filesystem::create_directories(ABSOLUTE_CACHE_PATH);
+        std::experimental::filesystem::create_directories(cache_path);
         update_cache();
     } else {
-        std::ifstream file(std::string(ABSOLUTE_CACHE_PATH) + "cache.json");
+        std::ifstream file(cache_path + "/cache.json");
         std::stringstream buffer;
         buffer << file.rdbuf();
         std::string content = buffer.str();
@@ -56,6 +59,18 @@ pcjsapi::cache::CacheRelease pcjsapi::cache::Cache::get_last_release()
     return releases[releases_size - 1];
 }
 
+pcjsapi::cache::CacheRelease *pcjsapi::cache::Cache::find_release(std::string tag_name)
+{
+    for (int i = 0; i < releases_size; i++)
+    {
+        if (releases[i].tag_name == tag_name)
+        {
+            return &releases[i];
+        }
+    }
+    return nullptr;
+}
+
 void pcjsapi::cache::Cache::update_cache(bool force)
 {
     std::cout << "Updating cache..." << std::endl;
@@ -75,7 +90,7 @@ void pcjsapi::cache::Cache::update_cache(bool force)
         for (int j = 0; j < releases[i].assets_size; j++)
         {
             this->releases[i].assets[j].name = releases[i].assets[j].name;
-            this->releases[i].assets[j].path = std::experimental::filesystem::absolute(std::string(ABSOLUTE_CACHE_PATH) + "/" + releases[i].tag_name + "+" + releases[i].assets[j].name);
+            this->releases[i].assets[j].path = std::experimental::filesystem::absolute(cache_path + "/" + releases[i].tag_name + "+" + releases[i].assets[j].name);
             if (force || (!std::experimental::filesystem::exists(this->releases[i].assets[j].path) && i == releases_size - 1))
             {
                 std::cout << "Downloading " << releases[i].assets[j].name << "..." << std::endl;
@@ -102,7 +117,7 @@ void pcjsapi::cache::Cache::update_cache(bool force)
     }
     std::string s = json.dump(4);
     std::ofstream f;
-    f.open(std::string(ABSOLUTE_CACHE_PATH) + "/cache.json");
+    f.open(cache_path + "/cache.json");
     f << s;
     f.close();
 }

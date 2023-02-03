@@ -1,10 +1,11 @@
 #include <iostream>
 #include "cache/cache.hpp"
+#include "cli_command.cpp"
 #include "command.cpp"
 
 int main(int arc, char **argv)
 {
-    pcjsapi::cache::Cache cache;
+    pcjsapi::cache::Cache cache("MisterMine01", "PCJsApi");
     std::string *args = new std::string[arc];
     for (int i = 0; i < arc; i++)
     {
@@ -14,7 +15,20 @@ int main(int arc, char **argv)
     {
         return pcjsapi::help();
     }
-    if (args[1] == "cli") {
+    if (args[1] == "init")
+    {
+        return pcjsapi::init(cache);
+    } else if (args[1] == "update") {
+        return pcjsapi::update(cache);
+    } else if (args[1] == "install") {
+        return pcjsapi::install(cache);
+    } else if (args[1] == "build") {
+        // TODO
+    } else if (args[1] == "run") {
+        // TODO
+    } else if (args[1] == "add") {
+        // TODO
+    } else if (args[1] == "cli") {
         if (arc == 2) {
             return pcjsapi::cli_help();
         }
