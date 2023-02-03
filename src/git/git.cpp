@@ -8,7 +8,6 @@ static size_t WriteCallback(void *contents, size_t size, size_t nmemb, void *use
     return size * nmemb;
 }
 
-
 pcjs::git::GitData::GitData(std::string username, std::string repository)
 {
     this->username = username;
