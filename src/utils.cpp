@@ -1,5 +1,5 @@
-#ifndef PCJSAPI_ZIPPER_CPP
-#define PCJSAPI_ZIPPER_CPP
+#ifndef PCJSAPI_UTILS_CPP
+#define PCJSAPI_UTILS_CPP
 
 #include <zip.h>
 #include <string>
@@ -7,9 +7,26 @@
 #include <string.h>
 #include <experimental/filesystem>
 #include <fstream>
+#include "cache/cache.hpp"
 
 namespace pcjsapi
 {
+    void getAsset(pcjsapi::cache::CacheRelease release, pcjsapi::cache::CacheAsset *gitignore, pcjsapi::cache::CacheAsset *zip_asset)
+    {
+        for (int i = 0; i < release.assets_size; i++)
+        {
+            if (release.assets[i].name == "gitignore")
+            {
+                *gitignore = release.assets[i];
+            }
+            else if (release.assets[i].name == "dev.zip")
+            {
+                *zip_asset = release.assets[i];
+            }
+        }
+    }
+
+
     int decompress(std::string path_zip, bool force = false, bool autocancel = false)
     {
         std::cout << "Decompressing " << path_zip << std::endl;

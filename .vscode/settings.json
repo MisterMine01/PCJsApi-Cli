@@ -54,7 +54,8 @@
         "streambuf": "cpp",
         "typeinfo": "cpp",
         "valarray": "cpp",
-        "filesystem": "cpp"
+        "filesystem": "cpp",
+        "cinttypes": "cpp"
     },
     "C_Cpp.default.includePath": [
         "${workspaceFolder}/include/**",
