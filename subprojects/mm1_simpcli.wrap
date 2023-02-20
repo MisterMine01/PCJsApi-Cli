@@ -1,0 +1,4 @@
+[wrap-git]
+url = https://github.com/MisterMine01/Simp-Cli.git
+revision = head
+depth = 1
