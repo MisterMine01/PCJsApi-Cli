@@ -60,5 +60,6 @@
     "C_Cpp.default.includePath": [
         "${workspaceFolder}/include/**",
     ],
-    "C_Cpp.errorSquiggles": "enabled"
+    "C_Cpp.errorSquiggles": "enabled",
+    "mesonbuild.configureOnOpen": true
 }

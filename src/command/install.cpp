@@ -33,11 +33,11 @@ namespace pcjsapi
         }
         void print_help()
         {
-            std::cout << name << ": " << description;
+            std::cout << description;
         }
         void run(std::vector<std::string> args)
         {
-            (void*)&args;
+            (void)args;
             std::cout << "install in this folder, are you ok ?" << std::endl
                       << "y/n[n]> ";
             std::string answer;
